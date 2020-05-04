@@ -9,7 +9,7 @@ ${INVALID USERNAME}  XXXXXX
 ${INVALID PASSWORD}  XXXXXX
 ${EMPTY}  ''
 
-${changeStoreBtnLocator}  //*[@class="select-store-link text-small"]
+${changeStoreBtnLocator}  //*[@class="own-store-container"]
 ${cookieBtnLocator}  //*[@class="light-button accept"]
 ${shopcartLocator}  widget_minishopcart
 ${searchFormLocator}  SimpleSearchForm_SearchTerm
@@ -18,17 +18,17 @@ ${storeBtn}  //li[@class="nav-item"]
 ${storeNameLocator}  //*[@class="col-sm-8"]/h1/strong
 ${addToCartBtn}  add2CartBtn
 ${quantityToAddInput}  quantityProductPage
-${product_title}    //*[@class="productTitle"]
+${product_title}    //*[@id="productTitle"]
 ${ShopcartAddedNotification}  MiniShopCartProductAddedWrapper
 ${empty_cart_element}   WC_EmptyShopCartDisplayf_div_1
 
-&{hameenlinna}  linkElement=[data-segmentid="Hameenlinna"]  locator=Kodin Terra Hämeenlinna  locationName=Hämeenlinna
-&{jyvaskyla}  linkElement=[data-segmentid="Jyvaskyla"]  locator=Kodin Terra Jyväskylä  locationName=Jyväskylä
-&{kokkola}  linkElement=[data-segmentid="Kokkola"]  locator=Kodin Terra Kokkola  locationName=Kokkola
-&{kuopio}  linkElement=[data-segmentid="Kuopio"]  locator=Kodin Terra Kuopio  locationName=Kuopio
-&{pori}  linkElement=[data-segmentid="Pori"]  locator=Kodin Terra Pori  locationName=Pori
-&{rovaniemi}  linkElement=[data-segmentid="Rovaniemi"]  locator=Kodin Terra Rovaniemi  locationName=Rovaniemi
-&{tuusula}  linkElement=[data-segmentid="Tuusula"]  locator=Kodin Terra Tuusula  locationName=Tuusula
+&{hameenlinna}  linkElement=[data-segmentid="Hameenlinna"]  locator=Kodin Terra Hämeenlinna  locationName=Hämeenlinna  id=hameenlinna
+&{jyvaskyla}  linkElement=[data-segmentid="Jyvaskyla"]  locator=Kodin Terra Jyväskylä  locationName=Jyväskylä  id=jyvaskyla
+&{kokkola}  linkElement=[data-segmentid="Kokkola"]  locator=Kodin Terra Kokkola  locationName=Kokkola  id=kokkola
+&{kuopio}  linkElement=[data-segmentid="Kuopio"]  locator=Kodin Terra Kuopio  locationName=Kuopio  id=kuopio
+&{pori}  linkElement=[data-segmentid="Pori"]  locator=Kodin Terra Pori  locationName=Pori  id=pori
+&{rovaniemi}  linkElement=[data-segmentid="Rovaniemi"]  locator=Kodin Terra Rovaniemi  locationName=Rovaniemi  id=rovanniemi
+&{tuusula}  linkElement=[data-segmentid="Tuusula"]  locator=Kodin Terra Tuusula  locationName=Tuusula  id=tuusula
 @{stores}   &{hameenlinna}   &{jyvaskyla}   &{kokkola}   &{kuopio}   &{pori}   &{rovaniemi}   &{tuusula}
 
 &{mainsite}   homeURL=https://www.kodinterra.fi/fi/terra   homeLocator=//*[@alt="Kodin Terra verkkokauppa - Etusivu"]
@@ -90,17 +90,19 @@ Goto Billing
     SeleniumLibrary.Element Should Be Visible  form_CREDITCARD:cardVerificationCode00
 
 Choose And Verify Delivery
-    ScrollTo And Click  delivery-type-container-KEKU_21S
-    ${delivery_cost}=  SeleniumLibrary.Execute Javascript  return document.querySelector('[id="delivery-type-container-KEKU_21S"]').querySelector('[class="col-12 col-sm-6 col-md-12 col-lg-6 ${SPACE}m-0 font-grumpy costs shoppingprocess-price"]').innerText
-    BuiltIn.Sleep  2  reason=None
-    ${delivery_cost_on_bill}=  SeleniumLibrary.Execute Javascript  return document.querySelector('[id="cart-shipping-charge-container"]').querySelector('[class="price-container"]').innerText
+
+    ScrollTo And Click  //*[contains(text(), "Toimitus kotiin")]
+    ${delivery_cost}=   SeleniumLibrary.Execute Javascript  return document.querySelector('[data-shipping-mode="KEKU 21S"]').querySelector('div > header > div > div > h3').innerText  
+    Log To Console  \ndelivery:${delivery_cost}
+    BuiltIn.Sleep  4
+    ${delivery_cost_on_bill}=   SeleniumLibrary.Execute Javascript  return document.querySelector('div[id="cart-shipping-charge-container"]').querySelector('div[class="price-container"]').innerText 
     BuiltIn.Should Be Equal  ${delivery_cost}  ${delivery_cost_on_bill}
     ${delivery_cost}=   StringToFloat  ${delivery_cost}
     BuiltIn.Set Suite Variable  ${DELIVERY_COST}  ${delivery_cost}
     
 
 Verify Info Section when Store Changed
-    To Store Info Section
+    To Store Info Section   ${hameenlinna.id}
     Verify Info Section  ${hameenlinna.locationName}
     Navigate To Store And Verify  ${pori.linkElement}  ${pori.locator}
     Verify Info Section  ${pori.locationName}  
@@ -115,7 +117,7 @@ Choose Store
     [Arguments]   ${selector}  ${locator}
     # Log To Console  \nChoose Store ${locator} 
     Wait Until Element Is Visible   //*[@id="changeCustomerStore"]
-    Execute Javascript    document.querySelectorAll('${selector}')[2].click()
+    Execute Javascript    document.querySelector('${selector}').click()
     Wait Until Page Contains  ${locator}
 
 Verify Search
@@ -148,13 +150,12 @@ Verify Shoppingcart Saldo Is Updated
 
 Verify Shoppingdesk
       ${count}=  Execute Javascript   return document.querySelectorAll('[class="d-flex align-items-center product"]').length
-
         FOR    ${INDEX}    IN RANGE  0  ${count}
         ${name}=   Execute Javascript   return document.querySelectorAll('[class="d-flex align-items-center product"]')[${INDEX}].querySelector('[class="title"]').innerText
         ${Count}=   Execute Javascript   return document.querySelectorAll('[class="d-flex align-items-center product"]')[${INDEX}].querySelector('[class="col-2 col-sm-1 col-md-2 col-lg-1 text-right"]').innerText
         ${price}=   Execute Javascript   return document.querySelectorAll('[class="d-flex align-items-center product"]')[${INDEX}].querySelector('[class="d-flex justify-content-end"]').innerText
         ${ref_item}=   Collections.Get From List  ${SHOPPINGCART_PRODUCTS}  ${INDEX}
-        # BuiltIn.Log To Console  \nName:${name}, pcs:${count}, price:${price}
+        BuiltIn.Log To Console  \nName:${name}, pcs:${count}, price:${price}
         BuiltIn.Should Contain  ${name}  ${ref_item}[name]
         BuiltIn.Should Contain  ${count}  ${ref_item}[count]
         BuiltIn.Should Contain  ${price}  ${ref_item}[price]
@@ -183,13 +184,16 @@ Navigate Categories
 Click SidenavigationElement
     [Arguments]   ${selector}   ${text}
     ${element}=   Get Element With InnerText  ${selector}   ${text}
-    SeleniumLibrary.Set Focus To Element  ${element}
+    # SeleniumLibrary.Set Focus To Element  ${element}
+    Scroll Element Into View  ${element}
     # Navigationbar was blocking sidebar element, so had to use ARROW_UP to get it visible (Selenium does not handle layer Z)
+    SeleniumLibrary.Press Keys  None   ARROW_UP
+    Sleep  0.5  reason=None
+    SeleniumLibrary.Press Keys  None   ARROW_UP
+    Sleep  0.5  reason=None
     SeleniumLibrary.Press Keys  None   ARROW_UP
     SeleniumLibrary.Mouse Over  ${element}
     SeleniumLibrary.Click Element   ${element}
-    # Execute Javascript   document.querySelectorAll('[alt="Obi naulalajitelma 550kpl"]')[0].scrollIntoView()
-    # Execute Javascript   document.querySelectorAll('[alt="Obi naulalajitelma 550kpl"]')[0].scrollIntoView()
     SeleniumLibrary.Wait Until Page Contains  ${text}
 
 Click Element With InnerText
@@ -201,8 +205,6 @@ Click Element With InnerText
 
 Get Element With InnerText 
     [Arguments]   ${selector}   ${text}
-    ${txt}=   Execute Javascript  for (const a of document.querySelectorAll('${selector}')) { if (a.innerText.match(/^\s*${text}\s*$/gm)) { return a.innerText }}
-    # BuiltIn.Log To Console    \nGet Element With InnerText ${text}, got ${txt}
     BuiltIn.Run Keyword And Return  Execute Javascript  for (const a of document.querySelectorAll('${selector}')) { if (a.innerText.match(/^\s*${text}\s*$/gm)) { return a }}
 
 Verify Shoppingcart Contents Count
@@ -216,9 +218,18 @@ Goto Shoppingcart
     SeleniumLibrary.Wait Until Page Contains Element  main-menu
     SeleniumLibrary.Click Element  widget_minishopcart
     SeleniumLibrary.Wait Until Page Contains Element  goToBuy 
+    Wait Until Page Contains Element    //body[@class="shopping-cart"]  
 
-Goto Shoppingdesk   
-    ScrollTo And Click  //*[@class="btn btn-primary btn-buy go-to-buy float-right"]
+Goto Shoppingdesk 
+    Input Text  shoppingCartZipCodeCheckInput  00400
+    Click Button   shoppingCartZipCodeCheckButton
+    Sleep  4
+    Wait Until Element Is Visible  //a[@class="btn btn-primary btn-buy go-to-buy float-right"]
+    ${url}=     Execute Javascript   return document.querySelector('.d-none > .btn-primary').getAttribute("href")
+    Go To  ${url}
+    Wait Until Page Contains  Valitse toimitustapa
+    # Wait Until Page Contains Element    //body[@class="ostoskori order-shipping-billing shopping-process-header-hidden"]
+    
 
 Is Shippingcart Empty
     ${count_of_products}=   Execute Javascript   return document.querySelectorAll('[class="d-flex align-items-center product mx-1 py-3"]').length
@@ -259,11 +270,14 @@ Add Products
     [Documentation]     Adds one or more pieces of products from products own selling page
     [Arguments]   ${product}  ${count}=1
     # BuiltIn.Log To Console  \n${product}:${count}
+    Wait Until Loader Is Not Visible
     ScrollTo And Click  //*[@alt='${product}']
-    SeleniumLibrary.Wait Until Element Is Visible  ${product_title} 
-    SeleniumLibrary.Element Text Should Be  ${product_title}    ${product}
+    # SeleniumLibrary.Wait Until Element Is Visible  ${product_title} 
+    # SeleniumLibrary.Element Text Should Be  ${product_title}    ${product}
+    Wait Until Page Contains  ${product}
+    Wait Until Element Is Visible  online-store-content
     SeleniumLibrary.Input Text  ${quantityToAddInput}  ${count} 
-    ${price}=  SeleniumLibrary.Execute Javascript  return document.querySelectorAll('[class="current-price flex flex-wrap"]')[0].firstElementChild.firstElementChild.attributes["data-price"].textContent 
+    ${price}=  SeleniumLibrary.Execute Javascript  return document.querySelector('[id="online-store-content"]').querySelector('strong[class="special-price"]').getAttribute('data-price').toString()
     Add Product To List  ${product}  ${price}  ${count}  ${TRUE}
     ScrollTo And Click  ${addToCartBtn}
     Verify Shoppingcart Product Is Added    ${product}
@@ -271,16 +285,18 @@ Add Products
 Add Product
     [Documentation]     Adds product from a list of product thumnails
     [Arguments]   ${product}
-    ${element}=  SeleniumLibrary.Execute Javascript  return document.querySelectorAll('[alt="${product}"]')[0].parentElement.parentElement.parentElement.parentElement.querySelector('[class="online-availability"]')
+    Wait Until Loader Is Not Visible
+    Wait Until Element Is Visible  //*[@class="product_listing_container"] 
+    ${element}=  SeleniumLibrary.Execute Javascript  return document.querySelector('[alt="${product}"]').parentElement.parentElement.parentElement.parentElement.querySelector('[class="online-availability"]').querySelector('.btn')
     ${price}=  SeleniumLibrary.Execute Javascript  return document.querySelectorAll('[alt="${product}"]')[0].parentElement.parentElement.parentElement.parentElement.querySelector('[class="special-price"]').innerText
     Add Product To List  ${product}  ${price}  1  ${TRUE}
     ScrollTo And Click  ${element} 
     Verify Shoppingcart Product Is Added    ${product} 
 
 To Store Info Section
+    [Arguments]   ${locationID}
     SeleniumLibrary.Wait Until Element Is Visible  main-menu
-    Click Element With InnerText  [class="nav-link"]  Myymälä
-    # Execute Javascript   document.querySelectorAll('[class="nav-link"]')[1160].click()
+    Execute Javascript   document.querySelector('[href="/fi/terra/myymalat/${locationID}"]').click()
 
 Verify Info Section
     [Arguments]   ${locator}
@@ -338,8 +354,15 @@ Verify List Has Right Elements At Beginning
 
 
 Hide Cookie button
+    Wait Until Element Is Visible  //*[contains(text(), "Haluatko valita automaattisesti lähimmän myymälän?")]
+    Click Element When Visible  //*[contains(text(), "Ei, älä valitse lähintä myymälää")]
     Click Element When Visible  ${cookieBtnLocator}
     Log To Console  \nCookie Button Hided 
+
+Wait Until Loader Is Not Visible
+    Wait Until Element Is Not Visible  .spinner
+    Wait Until Element Is Not Visible  .preventclicks
+    Wait For Condition  return document.readyState=="complete"
 
 
 # Loop Keywords
