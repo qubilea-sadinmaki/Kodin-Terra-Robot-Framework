@@ -93,7 +93,7 @@ Choose And Verify Delivery
 
     ScrollTo And Click  //*[contains(text(), "Toimitus kotiin")]
     ${delivery_cost}=   SeleniumLibrary.Execute Javascript  return document.querySelector('[data-shipping-mode="KEKU 21S"]').querySelector('div > header > div > div > h3').innerText  
-    Log To Console  \ndelivery:${delivery_cost}
+    # Log To Console  \ndelivery:${delivery_cost}
     BuiltIn.Sleep  4
     ${delivery_cost_on_bill}=   SeleniumLibrary.Execute Javascript  return document.querySelector('div[id="cart-shipping-charge-container"]').querySelector('div[class="price-container"]').innerText 
     BuiltIn.Should Be Equal  ${delivery_cost}  ${delivery_cost_on_bill}
@@ -232,7 +232,7 @@ Goto Shoppingdesk
 
 Is Shippingcart Empty
     ${count_of_products}=   Execute Javascript   return document.querySelectorAll('[class="d-flex align-items-center product mx-1 py-3"]').length
-    BuiltIn.Log To Console  \nShoppingcart had ${count_of_products} in it. 
+    # BuiltIn.Log To Console  \nShoppingcart had ${count_of_products} in it. 
     [Return]    ${count_of_products}==0
 
 Search And Add Product
@@ -242,7 +242,7 @@ Search And Add Product
     
 Search Product and Verify
     [Arguments]   ${product}
-    BuiltIn.Log To Console  \nSearch Product : ${product}
+    # BuiltIn.Log To Console  \nSearch Product : ${product}
     Do Search   ${searchFormLocator}  ${product}
     SeleniumLibrary.Wait Until Page Contains    ${product} 
 
@@ -251,10 +251,10 @@ Remove Products From Shoppingcart
      ${count_to_remove}=  Execute Javascript   return document.querySelectorAll('[class="remove_address_link hover_underline tlignore deleteItem text-decoration-none"]').length
 
         FOR    ${INDEX}    IN RANGE  0  ${count_to_remove}
-        ${element}=   Execute Javascript   return document.querySelector('[class="remove_address_link hover_underline tlignore deleteItem text-decoration-none"]')
+        ${element}=   Execute Javascript   return document.querySelectorAll('[class="remove_address_link hover_underline tlignore deleteItem text-decoration-none"]')[${count_to_remove} - (${INDEX}+1)]
         ScrollTo And Click  ${element}
-        # Wait For Loader Hidden
         BuiltIn.Sleep  3
+        Wait For Loader Hidden  1
         END
 
      BuiltIn.Log To Console  \nRemoved ${count_to_remove} products from shopingcart!  
@@ -276,7 +276,7 @@ Add Products
     Wait Until Element Is Visible  online-store-content
     SeleniumLibrary.Input Text  ${quantityToAddInput}  ${count} 
     ${price}=  SeleniumLibrary.Execute Javascript  return document.querySelector('[id="online-store-content"]').querySelector('strong[class="special-price"]').getAttribute('data-price').toString()
-    Add Product To List  ${product}  ${price}  ${count}  ${TRUE}
+    Add Product To List  ${product}  ${price}  ${count}  ${FALSE}
     Wait For Loader Hidden
     ScrollTo And Click  ${addToCartBtn}
     Verify Shoppingcart Product Is Added    ${product}
@@ -288,7 +288,7 @@ Add Product
     Wait Until Element Is Visible  //*[@class="product_listing_container"] 
     ${element}=  SeleniumLibrary.Execute Javascript  return document.querySelector('[alt="${product}"]').parentElement.parentElement.parentElement.parentElement.querySelector('[class="online-availability"]').querySelector('.btn')
     ${price}=  SeleniumLibrary.Execute Javascript  return document.querySelectorAll('[alt="${product}"]')[0].parentElement.parentElement.parentElement.parentElement.querySelector('[class="special-price"]').innerText
-    Add Product To List  ${product}  ${price}  1  ${TRUE}
+    Add Product To List  ${product}  ${price}  1  ${FALSE}
     Wait For Loader Hidden
     ScrollTo And Click  ${element} 
     Verify Shoppingcart Product Is Added    ${product} 
@@ -360,8 +360,14 @@ Hide Cookie button
     Log To Console  \nCookie Button Hided 
 
 Wait For Loader Hidden
-    ${check_element}=  Run Keyword and Return Status   Wait Until Element Is Visible  .spinner    1
-    Run Keyword If      '${check_element}' == 'True'     Wait Until Element Is Not Visible  .spinner
+    [Arguments]   ${timeout}=3
+    ${check_element}=  Run Keyword and Return Status   Wait Until Element Is Visible  preventclicks    ${timeout}
+    Run Keyword If      '${check_element}' == 'True'     Hide Loader
+
+Hide Loader
+    Log To Console  \n Wait for loader to hide
+    Wait Until Element Is Not Visible  preventclicks
+    Log To Console  \n Loader hidden
     
 
 # Loop Keywords

@@ -55,7 +55,7 @@ Verify Product Categories
         Navigate To Store And Verify  ${hameenlinna.linkElement}  ${hameenlinna.locator}
         Navigate Categories  Työkalut ja -koneet   Vasarat ja lekat     empty
         # Add Product  Ellix kirvesmiehen vasara 450g  #Oli tilapäisesti loppu
-        Add Product  Lux pajavasara 1000g Classic
+        Add Product  Lux kirvesmiehen vasara 225g Classic
         Verify Shoppingcart Saldo Is Updated
         Navigate Categories     Rakentaminen    Naulat, naulauslevyt ja palkkikengät    Naulat
         Add Product   Obi naulalajitelma 550kpl
