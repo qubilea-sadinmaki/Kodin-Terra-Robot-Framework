@@ -5,7 +5,7 @@ Metadata         Version    0.1
 
 Library      SeleniumLibrary
 
-# Test Teardown   Close All Browsers
+Test Teardown   Close All Browsers
 Resource  ${CURDIR}/resources/resources.robot
 Test Setup      Init Test
 

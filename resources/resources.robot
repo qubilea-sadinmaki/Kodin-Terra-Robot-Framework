@@ -184,7 +184,6 @@ Navigate Categories
 Click SidenavigationElement
     [Arguments]   ${selector}   ${text}
     ${element}=   Get Element With InnerText  ${selector}   ${text}
-    # SeleniumLibrary.Set Focus To Element  ${element}
     Scroll Element Into View  ${element}
     # Navigationbar was blocking sidebar element, so had to use ARROW_UP to get it visible (Selenium does not handle layer Z)
     SeleniumLibrary.Press Keys  None   ARROW_UP
@@ -249,11 +248,12 @@ Search Product and Verify
 
 # Shopcart adding / removing ----------------------------
 Remove Products From Shoppingcart
-     ${count_to_remove}=  Execute Javascript   return document.querySelectorAll('[class="d-none d-lg-inline-block"]').length
+     ${count_to_remove}=  Execute Javascript   return document.querySelectorAll('[class="remove_address_link hover_underline tlignore deleteItem text-decoration-none"]').length
 
         FOR    ${INDEX}    IN RANGE  0  ${count_to_remove}
-        ${element}=   Execute Javascript   return document.querySelector('[class="d-none d-lg-inline-block"]')
+        ${element}=   Execute Javascript   return document.querySelector('[class="remove_address_link hover_underline tlignore deleteItem text-decoration-none"]')
         ScrollTo And Click  ${element}
+        # Wait For Loader Hidden
         BuiltIn.Sleep  3
         END
 
@@ -270,26 +270,26 @@ Add Products
     [Documentation]     Adds one or more pieces of products from products own selling page
     [Arguments]   ${product}  ${count}=1
     # BuiltIn.Log To Console  \n${product}:${count}
-    Wait Until Loader Is Not Visible
+    Wait For Loader Hidden
     ScrollTo And Click  //*[@alt='${product}']
-    # SeleniumLibrary.Wait Until Element Is Visible  ${product_title} 
-    # SeleniumLibrary.Element Text Should Be  ${product_title}    ${product}
     Wait Until Page Contains  ${product}
     Wait Until Element Is Visible  online-store-content
     SeleniumLibrary.Input Text  ${quantityToAddInput}  ${count} 
     ${price}=  SeleniumLibrary.Execute Javascript  return document.querySelector('[id="online-store-content"]').querySelector('strong[class="special-price"]').getAttribute('data-price').toString()
     Add Product To List  ${product}  ${price}  ${count}  ${TRUE}
+    Wait For Loader Hidden
     ScrollTo And Click  ${addToCartBtn}
     Verify Shoppingcart Product Is Added    ${product}
 
 Add Product
     [Documentation]     Adds product from a list of product thumnails
     [Arguments]   ${product}
-    Wait Until Loader Is Not Visible
+    Wait For Loader Hidden
     Wait Until Element Is Visible  //*[@class="product_listing_container"] 
     ${element}=  SeleniumLibrary.Execute Javascript  return document.querySelector('[alt="${product}"]').parentElement.parentElement.parentElement.parentElement.querySelector('[class="online-availability"]').querySelector('.btn')
     ${price}=  SeleniumLibrary.Execute Javascript  return document.querySelectorAll('[alt="${product}"]')[0].parentElement.parentElement.parentElement.parentElement.querySelector('[class="special-price"]').innerText
     Add Product To List  ${product}  ${price}  1  ${TRUE}
+    Wait For Loader Hidden
     ScrollTo And Click  ${element} 
     Verify Shoppingcart Product Is Added    ${product} 
 
@@ -359,11 +359,10 @@ Hide Cookie button
     Click Element When Visible  ${cookieBtnLocator}
     Log To Console  \nCookie Button Hided 
 
-Wait Until Loader Is Not Visible
-    Wait Until Element Is Not Visible  .spinner
-    Wait Until Element Is Not Visible  .preventclicks
-    Wait For Condition  return document.readyState=="complete"
-
+Wait For Loader Hidden
+    ${check_element}=  Run Keyword and Return Status   Wait Until Element Is Visible  .spinner    1
+    Run Keyword If      '${check_element}' == 'True'     Wait Until Element Is Not Visible  .spinner
+    
 
 # Loop Keywords
     
