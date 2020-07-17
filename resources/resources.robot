@@ -49,8 +49,7 @@ Add Product To List
      Collections.Append To List  ${SHOPPINGCART_PRODUCTS}  ${CURRENT_PRODUCT}
      ${item}=   Collections.Get From List  ${SHOPPINGCART_PRODUCTS}  -1
      ${updated_saldo}=   BuiltIn.Evaluate  ${SHOPPINGCART_SALDO}+${item}[total]   
-     BuiltIn.Set Suite Variable   ${SHOPPINGCART_SALDO}   ${updated_saldo}     
-         
+     BuiltIn.Set Suite Variable   ${SHOPPINGCART_SALDO}   ${updated_saldo}    
     # BuiltIn.Log To Console  \nSaldo updated to:${SHOPPINGCART_SALDO}
 
 Remove Product From List    
@@ -183,16 +182,8 @@ Navigate Categories
 
 Click SidenavigationElement
     [Arguments]   ${selector}   ${text}
-    ${element}=   Get Element With InnerText  ${selector}   ${text}
-    Scroll Element Into View  ${element}
-    # Navigationbar was blocking sidebar element, so had to use ARROW_UP to get it visible (Selenium does not handle layer Z)
-    SeleniumLibrary.Press Keys  None   ARROW_UP
-    Sleep  0.5  reason=None
-    SeleniumLibrary.Press Keys  None   ARROW_UP
-    Sleep  0.5  reason=None
-    SeleniumLibrary.Press Keys  None   ARROW_UP
-    SeleniumLibrary.Mouse Over  ${element}
-    SeleniumLibrary.Click Element   ${element}
+    # ${element}=   Get Element With InnerText  ${selector}   ${text}
+    Execute Javascript  for (const a of document.querySelectorAll('${selector}')) { if (a.innerText.match(/^\s*${text}\s*$/gm)) { a.click() }}
     SeleniumLibrary.Wait Until Page Contains  ${text}
 
 Click Element With InnerText
@@ -210,14 +201,16 @@ Verify Shoppingcart Contents Count
     [Arguments]   ${remove_items_from_cart}=${FALSE}    ${fail_if_not_empty}=${FALSE} 
     Goto Shoppingcart 
     ${isShoppingcartEmpty}=   BuiltIn.Run Keyword  Is Shippingcart Empty
+    
     BuiltIn.Run Keyword If  not ${isShoppingcartEmpty} and ${fail_if_not_empty}  BuiltIn.Fail   Shopping cart was supposed to be empty!
     BuiltIn.Run Keyword If  not ${isShoppingcartEmpty} and ${remove_items_from_cart}    Remove Products From Shoppingcart 
+
 
 Goto Shoppingcart
     SeleniumLibrary.Wait Until Page Contains Element  main-menu
     SeleniumLibrary.Click Element  widget_minishopcart
     SeleniumLibrary.Wait Until Page Contains Element  goToBuy 
-    Wait Until Page Contains Element    //body[@class="shopping-cart"]  
+    Wait Until Page Contains Element    //body[@class="shopping-cart"]   
 
 Goto Shoppingdesk 
     Input Text  shoppingCartZipCodeCheckInput  00400
@@ -227,6 +220,7 @@ Goto Shoppingdesk
     ${url}=     Execute Javascript   return document.querySelector('.d-none > .btn-primary').getAttribute("href")
     Go To  ${url}
     Wait Until Page Contains  Valitse toimitustapa
+    BuiltIn.Log To Console  Goto Shoppingdesk 
     # Wait Until Page Contains Element    //body[@class="ostoskori order-shipping-billing shopping-process-header-hidden"]
     
 
@@ -259,19 +253,21 @@ Remove Products From Shoppingcart
 
      BuiltIn.Log To Console  \nRemoved ${count_to_remove} products from shopingcart!  
 
-Add Products To Shoppingcart
+Add Products To Shoppingcart  #############
     [Documentation]     Adds one or more pieces of products.   
     [Arguments]   ${product}  ${count}=1
-    # BuiltIn.Log To Console  \n${product}:${count}
-    BuiltIn.Run Keyword If  ${count} > 1  Add Products  ${product}  ${count}  
-    ...  ELSE   Add Product  ${product}
+    BuiltIn.Log To Console  \n${product}:${count}
+    Wait For Loader Hidden
+    Wait Until Element Is Visible   page
+    ${isProductPage}=  SeleniumLibrary.Execute Javascript  return document.getElementById('page').classList.contains('product-page')
+
+    BuiltIn.Run Keyword If  ${isProductPage} == ${TRUE}  Add Products  ${product}  ${count}  
+    ...  ELSE   Add Products Via List  ${product}   ${count}
 
 Add Products
     [Documentation]     Adds one or more pieces of products from products own selling page
-    [Arguments]   ${product}  ${count}=1
-    # BuiltIn.Log To Console  \n${product}:${count}
+    [Arguments]   ${product}  ${count}=1  
     Wait For Loader Hidden
-    ScrollTo And Click  //*[@alt='${product}']
     Wait Until Page Contains  ${product}
     Wait Until Element Is Visible  online-store-content
     SeleniumLibrary.Input Text  ${quantityToAddInput}  ${count} 
@@ -281,17 +277,11 @@ Add Products
     ScrollTo And Click  ${addToCartBtn}
     Verify Shoppingcart Product Is Added    ${product}
 
-Add Product
-    [Documentation]     Adds product from a list of product thumnails
-    [Arguments]   ${product}
-    Wait For Loader Hidden
-    Wait Until Element Is Visible  //*[@class="product_listing_container"] 
-    ${element}=  SeleniumLibrary.Execute Javascript  return document.querySelector('[alt="${product}"]').parentElement.parentElement.parentElement.parentElement.querySelector('[class="online-availability"]').querySelector('.btn')
-    ${price}=  SeleniumLibrary.Execute Javascript  return document.querySelectorAll('[alt="${product}"]')[0].parentElement.parentElement.parentElement.parentElement.querySelector('[class="special-price"]').innerText
-    Add Product To List  ${product}  ${price}  1  ${FALSE}
-    Wait For Loader Hidden
-    ScrollTo And Click  ${element} 
-    Verify Shoppingcart Product Is Added    ${product} 
+Add Products Via List
+    [Documentation]     Adds one or more pieces of products from products through list
+    [Arguments]   ${product}  ${count}=1
+    ScrollTo And Click  //*[@alt='${product}'] 
+    Add Products    ${product}  ${count}
 
 To Store Info Section
     [Arguments]   ${locationID}
