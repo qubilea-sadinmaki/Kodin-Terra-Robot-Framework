@@ -43,11 +43,8 @@ Verify Shoppingcart Contents
         ${example_product5}=     BuiltIn.Set Variable  Weber Pulse 1000 jalustalla sähkögrilli
         
         Navigate To Store And Verify  ${hameenlinna.linkElement}  ${hameenlinna.locator}
-        BuiltIn.Log To Console  step1
         Verify Shoppingcart Contents Count  ${TRUE}
-        BuiltIn.Log To Console  step2
         Search And Add Product  ${example_product4}
-        BuiltIn.Log To Console  step3
         Search And Add Product  ${example_product2}     2  
         Search And Add Product  ${example_product3}  
         Search And Add Product  ${example_product}

@@ -136,7 +136,8 @@ Verify Shopping Cart Example
     SeleniumLibrary.Wait Until Element Is Visible   //div[@id="PageHeading_1_-2001_1989"]//h1
     SeleniumLibrary.Element Text Should Be  //div[@id="PageHeading_1_-2001_1989"]//h1  Weber grillit
     ${product_name}=    Set Variable    Weber Genesis II E-410 GBS kaasugrilli
-    Add Products  ${product_name}   1
+    # Add Products  ${product_name}   1 
+    Add Products To Shoppingcart    ${product_name}
     Verify Shoppingcart Saldo Is Updated
 
 Verify Shoppingcart Saldo Is Updated
