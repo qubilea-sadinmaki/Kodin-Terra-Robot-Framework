@@ -15,27 +15,27 @@ ${BROWSER}  chrome
 *** Test Cases ***
 
 Verify Homepage
-        [Tags]  TestCase1
+        [Tags]  verify-homepage
         Navigate To Store And Verify  ${hameenlinna.linkElement}  ${hameenlinna.locator}
 
 Verify Store Change
-        [Tags]  TestCase2     
+        [Tags]  verify-store-change    
         Navigate To Store And Verify  ${hameenlinna.linkElement}  ${hameenlinna.locator}
         Verify Info Section when Store Changed
 
 Verify Search
-        [Tags]  TestCase3
+        [Tags]  verify-search
         Verify Search
 
 
 Verify Shoppingcart
-        [Tags]  TestCase4
+        [Tags]  verify-shoppingcart
         Navigate To Store And Verify  ${hameenlinna.linkElement}  ${hameenlinna.locator}
         Verify Shopping Cart Example
         
 
 Verify Shoppingcart Contents
-        [Tags]  TestCase5
+        [Tags]  verify-choppingcart-contents
         ${example_product}=     BuiltIn.Set Variable  Weber Genesis II E-410 GBS kaasugrilli
         ${example_product2}=     BuiltIn.Set Variable  Weber suojapeite Premium Gen II 3 P.
         ${example_product3}=     BuiltIn.Set Variable  Weber Original vihannespannu, iso
@@ -51,7 +51,7 @@ Verify Shoppingcart Contents
         Verify Shoppingcart Contents Count  ${TRUE}
 
 Verify Product Categories
-        [Tags]  TestCase6
+        [Tags]  verify-product-categories
         Navigate To Store And Verify  ${hameenlinna.linkElement}  ${hameenlinna.locator}
         Navigate Categories  Työkalut ja -koneet   Vasarat ja lekat     empty
         # Add Product  Ellix kirvesmiehen vasara 450g  #Oli tilapäisesti loppu
@@ -65,24 +65,10 @@ Verify Product Categories
         Verify Shoppingdesk
         Goto Billing
 
-# Test Case 7
-#         [Tags]  QuickTest
-#         # MyFirstCustomClass.SINGLETON
-#         # ${kind}=  BuiltIn.Set Variable  DOG
-#         # MyFirstCustomClass.HOW MANY ${kind} ARE HERE
-#         # SHOW LIST  dog  cat  ape
-#         # SHOW LIST OF KEYVARS  kvar1=value1  kvar2=value2  kvar3=value3
-#         # TITLE SHOULD START WITH  Kodin Terra - Pieniin suuriin muutoksiin
-#         # ${rand}=  RANDOM NUM
-#         # BuiltIn.Log To Console  RANDOM NUM:${rand}
-#         # ${seed}=  BuiltIn.Set Variable  1
-#         # ${rand}=  RANDOM NUM WITH SEED  ${seed}
-#         # BuiltIn.Log To Console  \nRANDOM NUMBER WITH SEED ${seed} is ${rand}
-#         # ${seed}=  BuiltIn.Set Variable  2
-#         # ${rand}=  RANDOM NUM WITH SEED  ${seed}
-#         # BuiltIn.Log To Console  \nRANDOM NUMBER WITH SEED ${seed} is ${rand}
-#         ${msg}=        CalendarHelper.Test
-#         BuiltIn.Log To Console  \n${msg}
+Development Test
+        [Tags]  development-test
+        ${msg}=  BuiltIn.Set Variable  opening
+        BuiltIn.Log To Console  \n${msg}
 
         
 

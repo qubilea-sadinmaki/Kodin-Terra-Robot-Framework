@@ -2,7 +2,6 @@
 Library	 OperatingSystem
 Library	 String
 Library  Collections
-Library   ${CURDIR}/shoppingcart/ShoppingCart.py
 Resource   ${CURDIR}/common_keywords.robot
 
 *** Variables ***
@@ -39,6 +38,31 @@ ${empty_cart_element}   WC_EmptyShopCartDisplayf_div_1
 Init Test
     SeleniumLibrary.Set Selenium Timeout  25 seconds
     Goto Main Site
+    BuiltIn.Set Suite Variable  ${SHOPPINGCART_SALDO}  0
+    BuiltIn.Set Suite Variable  ${DELIVERY_COST}  0
+    @{SHOPPINGCART_PRODUCTS}=   BuiltIn.Create List
+    BuiltIn.Set Suite Variable  @{SHOPPINGCART_PRODUCTS}
+
+Add Product To List
+    [Arguments]   ${name}=No name  ${price}=0  ${count}=0  ${log}=${FALSE}
+     Set Current Product  ${name}  ${price}  ${count}  ${log}
+     Collections.Append To List  ${SHOPPINGCART_PRODUCTS}  ${CURRENT_PRODUCT}
+     ${item}=   Collections.Get From List  ${SHOPPINGCART_PRODUCTS}  -1
+     ${updated_saldo}=   BuiltIn.Evaluate  ${SHOPPINGCART_SALDO}+${item}[total]   
+     BuiltIn.Set Suite Variable   ${SHOPPINGCART_SALDO}   ${updated_saldo}    
+    # BuiltIn.Log To Console  \nSaldo updated to:${SHOPPINGCART_SALDO}
+
+Remove Product From List    
+    [Arguments]   ${index}=-1
+    Collections.Remove From List  ${SHOPPINGCART_PRODUCTS}  ${index}
+
+Set Current Product
+    [Arguments]   ${name}=No name  ${price}=0  ${count}=0  ${log}=${FALSE}
+    # ${name}     Remove String   ${name}   ${SPACE}
+    ${total}=   StringToFloat   ${price}    ${count}    
+    ${price}=   StringToFloatToString   ${price}    1
+    BuiltIn.Set Suite Variable  &{CURRENT_PRODUCT}    name=${name}   price=${price}  count=${count}  total=${total} 
+    BuiltIn.Run Keyword If  ${log}  BuiltIn.Log To Console  \nCurrent product:&{CURRENT_PRODUCT}[name]:&{CURRENT_PRODUCT}[price]:&{CURRENT_PRODUCT}[count]:&{CURRENT_PRODUCT}[total]
     
 Goto Main Site
     Open Browser   ${mainsite.homeURL}   ${BROWSER} 
@@ -65,13 +89,16 @@ Goto Billing
     SeleniumLibrary.Element Should Be Visible  form_CREDITCARD:cardVerificationCode00
 
 Choose And Verify Delivery
+
     ScrollTo And Click  //*[contains(text(), "Toimitus kotiin")]
-    ${delivery_cost}=   SeleniumLibrary.Execute Javascript  return document.querySelector('[data-shipping-mode="KEKU 21S"]').querySelector('div > header > div > div > h3').innerText
+    ${delivery_cost}=   SeleniumLibrary.Execute Javascript  return document.querySelector('[data-shipping-mode="KEKU 21S"]').querySelector('div > header > div > div > h3').innerText  
+    # Log To Console  \ndelivery:${delivery_cost}
     BuiltIn.Sleep  4
     ${delivery_cost_on_bill}=   SeleniumLibrary.Execute Javascript  return document.querySelector('div[id="cart-shipping-charge-container"]').querySelector('div[class="price-container"]').innerText 
     BuiltIn.Should Be Equal  ${delivery_cost}  ${delivery_cost_on_bill}
     ${delivery_cost}=   StringToFloat  ${delivery_cost}
-    ShoppingCart.Set Delivery Cost  ${delivery_cost}  
+    BuiltIn.Set Suite Variable  ${DELIVERY_COST}  ${delivery_cost}
+    
 
 Verify Info Section when Store Changed
     To Store Info Section   ${hameenlinna.id}
@@ -109,46 +136,35 @@ Verify Shopping Cart Example
     SeleniumLibrary.Wait Until Element Is Visible   //div[@id="PageHeading_1_-2001_1989"]//h1
     SeleniumLibrary.Element Text Should Be  //div[@id="PageHeading_1_-2001_1989"]//h1  Weber grillit
     ${product_name}=    Set Variable    Weber Genesis II E-410 GBS kaasugrilli
+    # Add Products  ${product_name}   1 
     Add Products To Shoppingcart    ${product_name}
     Verify Shoppingcart Saldo Is Updated
 
 Verify Shoppingcart Saldo Is Updated
     SeleniumLibrary.Wait Until Element Is Visible   ${ShopcartAddedNotification}  
-    ${saldo_addition}=  ShoppingCart.Get Last Product Total Price
-    BuiltIn.Log To Console  saldo_addition:${saldo_addition}
+    ${saldo_addition}=  BuiltIn.Set Variable  &{CURRENT_PRODUCT}[total]
     ${saldo_addition}=  Convert Float To Comparable  ${saldo_addition}
     ${saldo_added}    Get Text   widget_minishopcart 
     ${saldo_added}  Remove String   ${saldo_added}   ${SPACE}
     BuiltIn.Should Contain  ${saldo_added}    ${saldo_addition} 
 
 Verify Shoppingdesk
-      ${count}=  Execute Javascript   return document.querySelectorAll('[class="row align-items-center product mb-2"]').length
-      BuiltIn.Log To Console  \nProducts count:${count}
+      ${count}=  Execute Javascript   return document.querySelectorAll('[class="d-flex align-items-center product"]').length
         FOR    ${INDEX}    IN RANGE  0  ${count}
-        ${name}=   Execute Javascript   return document.querySelectorAll('[class="row align-items-center product mb-2"]')[${INDEX}].querySelector('[class="title"]').innerText
-        ${Count}=   Execute Javascript   return document.querySelectorAll('[class="row align-items-center product mb-2"]')[${INDEX}].querySelector('[class="col-2 col-sm-1 col-md-2 col-lg-1 text-right"]').innerText
-        ${price}=   Execute Javascript   return document.querySelectorAll('[class="row align-items-center product mb-2"]')[${INDEX}].querySelector('[class="d-flex justify-content-end"]').innerText
-
-        ${ref_name}=   ShoppingCart.Get Product Name  ${INDEX}
-        ${ref_count}=   ShoppingCart.Get Product Count  ${INDEX}
-        ${ref_price}=   ShoppingCart.Get Product Price  ${INDEX}
-
-        BuiltIn.Should Contain  ${name}  ${ref_name}
-        BuiltIn.Should Contain  ${count}  ${ref_count}
-        BuiltIn.Should Contain  ${price}  ${ref_price}
+        ${name}=   Execute Javascript   return document.querySelectorAll('[class="d-flex align-items-center product"]')[${INDEX}].querySelector('[class="title"]').innerText
+        ${Count}=   Execute Javascript   return document.querySelectorAll('[class="d-flex align-items-center product"]')[${INDEX}].querySelector('[class="col-2 col-sm-1 col-md-2 col-lg-1 text-right"]').innerText
+        ${price}=   Execute Javascript   return document.querySelectorAll('[class="d-flex align-items-center product"]')[${INDEX}].querySelector('[class="d-flex justify-content-end"]').innerText
+        ${ref_item}=   Collections.Get From List  ${SHOPPINGCART_PRODUCTS}  ${INDEX}
+        BuiltIn.Log To Console  \nName:${name}, pcs:${count}, price:${price}
+        BuiltIn.Should Contain  ${name}  ${ref_item}[name]
+        BuiltIn.Should Contain  ${count}  ${ref_item}[count]
+        BuiltIn.Should Contain  ${price}  ${ref_item}[price]
         END
 
-        ${saldo_on_site}=   Execute Javascript   return document.querySelector('[class="cart-quantity-shipping-charge-container"]').querySelector('[class="price-container"]').innerText
-        ${delivery_charge_on_site}=   Execute Javascript   return document.querySelector('[id="cart-shipping-charge-container"]').querySelector('[class="price-container"]').innerText
-        ${total_saldo_on_site}=   Execute Javascript   return document.querySelector('[class="total-sum"]').querySelector('[class="price-container"]').innerText
-        
-        ${saldo_on_cache}=  ShoppingCart.Get Saldo As String  ,
-        ${total_saldo_on_cache}=  ShoppingCart.Get Total Saldo As String  , 
-        ${delivery_cost_on_cache}=  ShoppingCart.Get Delivery Cost As String  , 
-        
-        BuiltIn.Should Contain  ${saldo_on_site}  ${saldo_on_cache} 
-        BuiltIn.Should Contain  ${delivery_charge_on_site}  ${delivery_cost_on_cache} 
-        BuiltIn.Should Contain  ${total_saldo_on_site}  ${total_saldo_on_cache}        
+        ${total_sum}=   Execute Javascript   return document.querySelector('[class="total-sum"]').querySelector('[class="price-container"]').innerText
+        ${saldo}=   Convert Float To Comparable  ${SHOPPINGCART_SALDO}  
+        # BuiltIn.Log To Console  \nTotal sum: ${total_sum} vs ${saldo}  
+        BuiltIn.Should Contain  ${total_sum}  ${saldo}        
 
 Verify Shoppingcart Product Is Added
     [Arguments]  ${product}
@@ -188,7 +204,7 @@ Verify Shoppingcart Contents Count
     ${isShoppingcartEmpty}=   BuiltIn.Run Keyword  Is Shippingcart Empty
     
     BuiltIn.Run Keyword If  not ${isShoppingcartEmpty} and ${fail_if_not_empty}  BuiltIn.Fail   Shopping cart was supposed to be empty!
-    BuiltIn.Run Keyword If  not ${isShoppingcartEmpty} and ${remove_items_from_cart}    Verify And Remove Products From Shoppingcart 
+    BuiltIn.Run Keyword If  not ${isShoppingcartEmpty} and ${remove_items_from_cart}    Remove Products From Shoppingcart 
 
 
 Goto Shoppingcart
@@ -226,10 +242,9 @@ Search Product and Verify
     SeleniumLibrary.Wait Until Page Contains    ${product} 
 
 # Shopcart adding / removing ----------------------------
-Verify And Remove Products From Shoppingcart
+Remove Products From Shoppingcart
      ${count_to_remove}=  Execute Javascript   return document.querySelectorAll('[class="remove_address_link hover_underline tlignore deleteItem text-decoration-none"]').length
-     ${count_in_cache}=  ShoppingCart.Get Count Of Products 
-     Should Be True  ${count_to_remove} == ${count_in_cache}
+
         FOR    ${INDEX}    IN RANGE  0  ${count_to_remove}
         ${element}=   Execute Javascript   return document.querySelectorAll('[class="remove_address_link hover_underline tlignore deleteItem text-decoration-none"]')[${count_to_remove} - (${INDEX}+1)]
         ScrollTo And Click  ${element}
@@ -258,8 +273,7 @@ Add Products
     Wait Until Element Is Visible  online-store-content
     SeleniumLibrary.Input Text  ${quantityToAddInput}  ${count} 
     ${price}=  SeleniumLibrary.Execute Javascript  return document.querySelector('[id="online-store-content"]').querySelector('strong[class="special-price"]').getAttribute('data-price').toString()
-    # Add Product To List  ${product}  ${price}  ${count}  ${FALSE}  #SHOPPINGCART!!!
-    ShoppingCart.Add Product  ${product}  ${price}  ${count}  kpl  ${TRUE}
+    Add Product To List  ${product}  ${price}  ${count}  ${FALSE}
     Wait For Loader Hidden
     ScrollTo And Click  ${addToCartBtn}
     Verify Shoppingcart Product Is Added    ${product}

@@ -49,7 +49,6 @@ StringToFloatToString
         ${f}=   StringToFloat  ${str}  ${modifier}
         ${f}=   BuiltIn.Convert To String  ${f}
         ${f}=   String.Replace String  ${f}  .  ,
-        # BuiltIn.Log To Console  \nStringToFloatToString:${f}
         [Return]    ${f} 
 
 StringToFloat
@@ -58,13 +57,10 @@ StringToFloat
         ${f}=   String.Remove String Using Regexp  ${f}  [^0-9.,]
         ${f}=   String.Replace String  ${f}  ,  .
         # Remove possible extra dots and everything after that (fe. 4.950.01, removes .01)
-        # ${f}=    Only Two Digits  ${f}
-        ${f}=   SeleniumLibrary.Execute Javascript  return /^[0-9]+\.?.{0,2}/.exec("${f}")[0];  #/^([^.]*.[^.]*),*/.exec("${f}")[0];  
+        ${f}=   SeleniumLibrary.Execute Javascript  return /^[0-9]+\.?.{0,2}/.exec("${f}")[0];  
         ${f}=   BuiltIn.Convert To Number  ${f}
-        # BuiltIn.Log To Console  \nStringToFloat:${f}
         ${f}=   BuiltIn.Evaluate  ${f}*${modifier}
         ${f}=   SeleniumLibrary.Execute Javascript  return /^[0-9]+\.?.{0,2}/.exec("${f}")[0];
-        # BuiltIn.Log To Console  \nStringToFloat2:${f}
         [Return]    ${f} 
 
 Convert Float To Comparable
