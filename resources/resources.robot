@@ -334,7 +334,7 @@ Hide Cookie button
     Wait Until Element Is Visible  //*[contains(text(), "Haluatko valita automaattisesti lähimmän myymälän?")]
     Click Element When Visible  //*[contains(text(), "Ei, älä valitse lähintä myymälää")]
     Click Element When Visible  ${cookieBtnLocator}
-    Log To Console  \nCookie Button Hided 
+    # Log To Console  \nCookie Button Hided 
 
 Wait For Loader Hidden
     [Arguments]   ${timeout}=3

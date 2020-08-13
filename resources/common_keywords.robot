@@ -12,44 +12,44 @@ ScrollTo And Click
     SeleniumLibrary.Scroll Element Into View  ${locator}  
     Click Element   ${locator}
 
-Hide Blocking Element
-    [Arguments]   ${locator}
-    ${isVisible}=  Run Keyword And Return Status    Wait Until Element Is Visible   ${locator}   1
-    Run Keyword IF  ${isVisible}  Click Element  ${locator}
+# Hide Blocking Element
+#     [Arguments]   ${locator}
+#     ${isVisible}=  Run Keyword And Return Status    Wait Until Element Is Visible   ${locator}   1
+#     Run Keyword IF  ${isVisible}  Click Element  ${locator}
 
-Open Page And Verify Element Is Visible
-        [Arguments]  ${url}  ${locator}
-        Open Browser   ${url}   ${BROWSER} 
-        Wait Until Page Contains Element   ${locator} 
+# Open Page And Verify Element Is Visible
+#         [Arguments]  ${url}  ${locator}
+#         Open Browser   ${url}   ${BROWSER} 
+#         Wait Until Page Contains Element   ${locator} 
 
-Open Page And Verify It Contains Text
-        [Arguments]  ${url}  ${text}
-        Open Browser   ${url}   ${BROWSER} 
-        Wait Until Page Contains  ${text}
+# Open Page And Verify It Contains Text
+#         [Arguments]  ${url}  ${text}
+#         Open Browser   ${url}   ${BROWSER} 
+#         Wait Until Page Contains  ${text}
 
-Click Element And Verify Page Loaded
-    [Arguments]  ${click_locator}   ${element_locator} 
-    Click Element  ${click_locator}
-    Wait Until Page Contains Element   ${element_locator}
+# Click Element And Verify Page Loaded
+#     [Arguments]  ${click_locator}   ${element_locator} 
+#     Click Element  ${click_locator}
+#     Wait Until Page Contains Element   ${element_locator}
 
-Login
-        [Arguments]  ${username_locator}   ${username}  ${password_locator}   ${password}  ${login_button} 
-        Wait Until Element Is Visible   ${login_button}
-        Input Text    ${username_locator}    ${username}
-        Input Password    ${password_locator}    ${password}
-        Click Button   ${login_button} 
+# Login
+#         [Arguments]  ${username_locator}   ${username}  ${password_locator}   ${password}  ${login_button} 
+#         Wait Until Element Is Visible   ${login_button}
+#         Input Text    ${username_locator}    ${username}
+#         Input Password    ${password_locator}    ${password}
+#         Click Button   ${login_button} 
 
 Do Search
         [Arguments]  ${locator}   ${search_for}
         Input Text    ${locator}    ${search_for}
         Press Keys  ${locator}   RETURN 
 
-StringToFloatToString
-    [Arguments]  ${str}  ${modifier}=1
-        ${f}=   StringToFloat  ${str}  ${modifier}
-        ${f}=   BuiltIn.Convert To String  ${f}
-        ${f}=   String.Replace String  ${f}  .  ,
-        [Return]    ${f} 
+# StringToFloatToString
+#     [Arguments]  ${str}  ${modifier}=1
+#         ${f}=   StringToFloat  ${str}  ${modifier}
+#         ${f}=   BuiltIn.Convert To String  ${f}
+#         ${f}=   String.Replace String  ${f}  .  ,
+#         [Return]    ${f} 
 
 StringToFloat
     [Arguments]  ${str}  ${modifier}=1
@@ -70,6 +70,6 @@ Convert Float To Comparable
         ${f}=   String.Replace String  ${f}  .  ,
         [Return]    ${f}   
 
-Only Two Digits
-    [Arguments]  ${f}
-    SeleniumLibrary.Execute Javascript  return /^[0-9]+\.?.{0,2}/.exec("${f}")[0];
+# Only Two Digits
+#     [Arguments]  ${f}
+#     SeleniumLibrary.Execute Javascript  return /^[0-9]+\.?.{0,2}/.exec("${f}")[0];

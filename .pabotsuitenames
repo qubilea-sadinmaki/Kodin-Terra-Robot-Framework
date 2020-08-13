@@ -1,0 +1,6 @@
+datasources:2e895317487a1949007b1388b487889449884ed1
+commandlineoptions:035d9e38e628f0adc876396dd3fcf7f53aed1acb
+suitesfrom:no-suites-from-option
+file:c2ccf165f86f12c7fe1fb6f5b66d43fcdb3e134a
+--suite Kodin-Terra-Robot-Framework.Kodin Terra Android
+--suite Kodin-Terra-Robot-Framework.Kodin Terra Testcases

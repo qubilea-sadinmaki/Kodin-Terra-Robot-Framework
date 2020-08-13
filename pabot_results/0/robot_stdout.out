@@ -1,0 +1,17 @@
+==============================================================================
+Kodin-Terra-Robot-Framework                                                   
+==============================================================================
+Kodin-Terra-Robot-Framework.Kodin Terra Android :: Tests for Kodinterra.fi,...
+==============================================================================
+Verify Homepage                                                       | FAIL |
+No keyword with name 'Open Application' found.
+------------------------------------------------------------------------------
+Kodin-Terra-Robot-Framework.Kodin Terra Android :: Tests for Kodin... | FAIL |
+1 critical test, 0 passed, 1 failed
+1 test total, 0 passed, 1 failed
+==============================================================================
+Kodin-Terra-Robot-Framework                                           | FAIL |
+1 critical test, 0 passed, 1 failed
+1 test total, 0 passed, 1 failed
+==============================================================================
+Output:  /Users/qubilearnd/qubilea-sadinmaki/Kodin-Terra-Robot-Framework/pabot_results/0/output.xml

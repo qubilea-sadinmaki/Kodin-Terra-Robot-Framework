@@ -1,0 +1,34 @@
+[ ERROR ] Error in file '/Users/qubilearnd/qubilea-sadinmaki/Kodin-Terra-Robot-Framework/kodin_terra_android.robot' on line 5: Importing test library 'AppiumLibrary' failed: ImportError: No module named AppiumLibrary
+Traceback (most recent call last):
+  None
+PYTHONPATH:
+  /usr/local/bin
+  /Library/Python/2.7/site-packages/pip-20.1-py2.7.egg
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python27.zip
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/plat-darwin
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/plat-mac
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/plat-mac/lib-scriptpackages
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-tk
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-old
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-dynload
+  /Library/Python/2.7/site-packages
+  /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python
+  /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC
+[ ERROR ] Error in file '/Users/qubilearnd/qubilea-sadinmaki/Kodin-Terra-Robot-Framework/resources/mobile_resources.robot' on line 5: Importing test library 'AppiumLibrary' failed: ImportError: No module named AppiumLibrary
+Traceback (most recent call last):
+  None
+PYTHONPATH:
+  /usr/local/bin
+  /Library/Python/2.7/site-packages/pip-20.1-py2.7.egg
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python27.zip
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/plat-darwin
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/plat-mac
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/plat-mac/lib-scriptpackages
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-tk
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-old
+  /System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-dynload
+  /Library/Python/2.7/site-packages
+  /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python
+  /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC

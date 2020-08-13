@@ -1,0 +1,21 @@
+==============================================================================
+Kodin-Terra-Robot-Framework                                                   
+==============================================================================
+Kodin-Terra-Robot-Framework.Kodin Terra Testcases :: Tests for Kodinterra.f...
+==============================================================================
+Verify Homepage                                                       | FAIL |
+Setup failed:
+No keyword with name 'SeleniumLibrary.Set Selenium Timeout' found.
+
+Also teardown failed:
+No keyword with name 'Close All Browsers' found.
+------------------------------------------------------------------------------
+Kodin-Terra-Robot-Framework.Kodin Terra Testcases :: Tests for Kod... | FAIL |
+1 critical test, 0 passed, 1 failed
+1 test total, 0 passed, 1 failed
+==============================================================================
+Kodin-Terra-Robot-Framework                                           | FAIL |
+1 critical test, 0 passed, 1 failed
+1 test total, 0 passed, 1 failed
+==============================================================================
+Output:  /Users/qubilearnd/qubilea-sadinmaki/Kodin-Terra-Robot-Framework/pabot_results/1/output.xml
