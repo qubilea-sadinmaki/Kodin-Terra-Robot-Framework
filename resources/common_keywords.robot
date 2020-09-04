@@ -12,6 +12,37 @@ ScrollTo And Click
     SeleniumLibrary.Scroll Element Into View  ${locator}  
     Click Element   ${locator}
 
+Do Search
+        [Arguments]  ${locator}   ${search_for}
+        Input Text    ${locator}    ${search_for}
+        Press Keys  ${locator}   RETURN 
+
+StringToFloat
+    [Arguments]  ${str}  ${modifier}=1
+        ${f}=   BuiltIn.Set Variable  ${str} 
+        ${f}=   String.Remove String Using Regexp  ${f}  [^0-9.,]
+        ${f}=   String.Replace String  ${f}  ,  .
+        # Remove possible extra dots and everything after that (fe. 4.950.01, removes .01)
+        ${f}=   SeleniumLibrary.Execute Javascript  return /^[0-9]+\.?.{0,2}/.exec("${f}")[0];  
+        ${f}=   BuiltIn.Convert To Number  ${f}
+        ${f}=   BuiltIn.Evaluate  ${f}*${modifier}
+        ${f}=   SeleniumLibrary.Execute Javascript  return /^[0-9]+\.?.{0,2}/.exec("${f}")[0];
+        [Return]    ${f} 
+
+Convert Float To Comparable
+        [Arguments]  ${f}
+        ${f}=  Evaluate  "%.2f" % ${f}
+        ${f}=   BuiltIn.Convert To String  ${f}
+        ${f}=   String.Replace String  ${f}  .  ,
+        [Return]    ${f} 
+
+# StringToFloatToString
+#     [Arguments]  ${str}  ${modifier}=1
+#         ${f}=   StringToFloat  ${str}  ${modifier}
+#         ${f}=   BuiltIn.Convert To String  ${f}
+#         ${f}=   String.Replace String  ${f}  .  ,
+#         [Return]    ${f} 
+
 # Hide Blocking Element
 #     [Arguments]   ${locator}
 #     ${isVisible}=  Run Keyword And Return Status    Wait Until Element Is Visible   ${locator}   1
@@ -37,38 +68,7 @@ ScrollTo And Click
 #         Wait Until Element Is Visible   ${login_button}
 #         Input Text    ${username_locator}    ${username}
 #         Input Password    ${password_locator}    ${password}
-#         Click Button   ${login_button} 
-
-Do Search
-        [Arguments]  ${locator}   ${search_for}
-        Input Text    ${locator}    ${search_for}
-        Press Keys  ${locator}   RETURN 
-
-# StringToFloatToString
-#     [Arguments]  ${str}  ${modifier}=1
-#         ${f}=   StringToFloat  ${str}  ${modifier}
-#         ${f}=   BuiltIn.Convert To String  ${f}
-#         ${f}=   String.Replace String  ${f}  .  ,
-#         [Return]    ${f} 
-
-StringToFloat
-    [Arguments]  ${str}  ${modifier}=1
-        ${f}=   BuiltIn.Set Variable  ${str} 
-        ${f}=   String.Remove String Using Regexp  ${f}  [^0-9.,]
-        ${f}=   String.Replace String  ${f}  ,  .
-        # Remove possible extra dots and everything after that (fe. 4.950.01, removes .01)
-        ${f}=   SeleniumLibrary.Execute Javascript  return /^[0-9]+\.?.{0,2}/.exec("${f}")[0];  
-        ${f}=   BuiltIn.Convert To Number  ${f}
-        ${f}=   BuiltIn.Evaluate  ${f}*${modifier}
-        ${f}=   SeleniumLibrary.Execute Javascript  return /^[0-9]+\.?.{0,2}/.exec("${f}")[0];
-        [Return]    ${f} 
-
-Convert Float To Comparable
-        [Arguments]  ${f}
-        ${f}=  Evaluate  "%.2f" % ${f}
-        ${f}=   BuiltIn.Convert To String  ${f}
-        ${f}=   String.Replace String  ${f}  .  ,
-        [Return]    ${f}   
+#         Click Button   ${login_button}   
 
 # Only Two Digits
 #     [Arguments]  ${f}
