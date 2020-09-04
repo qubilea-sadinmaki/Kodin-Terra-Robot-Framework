@@ -38,14 +38,14 @@ ${empty_cart_element}   WC_EmptyShopCartDisplayf_div_1
 
 *** Keywords *** 
 Init Test
-    [Arguments]   ${browser}
+    [Arguments]   ${browser_to_use}
     Open Application  http://localhost:4723/wd/hub  
     ...  platformName=Android  
-    ...  platformVersion=11
+    ...  platformVersion=9
     ...  fullReset=false  
     ...  noReset=true  
     ...  deviceName=emulator-5554 
-    ...  browserName=${browser}
+    ...  browserName=${browser_to_use}
     
 Goto Main Site
     Go To Url  https://www.kodinterra.fi/fi/terra 

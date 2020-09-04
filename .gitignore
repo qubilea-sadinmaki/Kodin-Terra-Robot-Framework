@@ -2,3 +2,5 @@
 *.png
 *.html
 *.xml
+pabot_results/.DS_Store
+*.pyc
